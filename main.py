@@ -1,11 +1,6 @@
 # main.py
 
 from libraryClasses import Book, Member, BorrowRecord, Library
-from validation import (
-    validate_book_id, validate_member_id,
-    validate_name, validate_age, validate_contact, validate_genre,
-    validate_author, validate_title
-)
 from validation import get_valid_input
 
 def pause():
@@ -37,16 +32,13 @@ def main():
         # ----------------------------------------
         if choice == "1":
             print("\n--- Add New Book ---")
-            book_id = input("Book ID: ").strip()
-            title = input("Title: ").strip()
-            author = input("Author: ").strip()
-            genre = input("Genre: ").strip()
+
 
             try:
-                validate_book_id(book_id)
-                validate_title(title)
-                validate_author(author)
-                validate_genre(genre)
+                book_id = get_valid_input("book_id")
+                title = get_valid_input("title")
+                author = get_valid_input("author")
+                genre = get_valid_input("genre")
 
                 library.add_book(Book(book_id, title, author, genre))
                 library.save_to_json()
@@ -61,16 +53,11 @@ def main():
         # ----------------------------------------
         elif choice == "2":
             print("\n--- Add New Member ---")
-            member_id = input("Member ID: ").strip()
-            name = input("Name: ").strip()
-            age = int(input("Age: ").strip())
-            contact = input("Contact: ").strip()
-
             try:
-                validate_member_id(member_id)
-                validate_name(name)
-                validate_age(age)
-                validate_contact(contact)
+                member_id = get_valid_input("member_id")
+                name = get_valid_input("name")
+                age = get_valid_input("age", isInteger=True)
+                contact = get_valid_input("contact")
 
                 library.add_member(Member(member_id, name, age, contact))
                 library.save_to_json()
@@ -85,12 +72,11 @@ def main():
         # ----------------------------------------
         elif choice == "3":
             print("\n--- Borrow Book ---")
-            member_id = input("Member ID: ").strip()
-            book_id = input("Book ID: ").strip()
+
 
             try:
-                validate_book_id(book_id)
-                validate_member_id(member_id)
+                member_id = get_valid_input("member_id")
+                book_id = get_valid_input("book_id")
 
                 library.borrow_book(member_id, book_id)
                 library.save_to_json()
@@ -105,10 +91,11 @@ def main():
         # ----------------------------------------
         elif choice == "4":
             print("\n--- Return Book ---")
-            member_id = input("Member ID: ").strip()
-            book_id = input("Book ID: ").strip()
 
             try:
+                member_id = get_valid_input("member_id")
+                book_id = get_valid_input("book_id")
+
                 library.return_book(member_id, book_id)
                 library.save_to_json()
                 print("Book returned successfully.")

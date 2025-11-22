@@ -49,22 +49,22 @@ def validate_title(title):
 ## Map of to-be-validated elements and their validators with messages
 ## format: "element" : (prompt, validator)
 elementValidatorMap = {
-    "book_id": ("Book ID", validate_book_id),
-    "member_id": ("Member ID", validate_member_id),
-    "name": ("Name", validate_name),
-    "age": ("Age", validate_age),
-    "contact": ("Contact", validate_contact),
-    "genre": ("Genre", validate_genre),
-    "author": ("Author", validate_author),
-    "title": ("Title", validate_title)
+    "book_id": ("Book ID :", validate_book_id),
+    "member_id": ("Member ID :", validate_member_id),
+    "name": ("Name :", validate_name),
+    "age": ("Age :", validate_age),
+    "contact": ("Contact :", validate_contact),
+    "genre": ("Genre :", validate_genre),
+    "author": ("Author :", validate_author),
+    "title": ("Title :", validate_title)
 }
 
 # Helper function that simplifies user interaction and validation
-def get_valid_input(element):
+def get_valid_input(element, isInteger=False):
     if elementValidatorMap.get(element):
         prompt, validator = elementValidatorMap.get(element)
         while True:
-            value = input(prompt).strip()
+            value = input(prompt).strip() if not isInteger else int(input(prompt).strip())
             try:
                 if validator:
                     #validator(value, *args) if args else validator(value) ## enable when arg is needed for validator
@@ -72,5 +72,5 @@ def get_valid_input(element):
                 return value
             except ValidationError as e:
                 print(f"Invalid input: {e}")
-    else
+    else:
         raise ValueError(f"Missing configuration for {element=}")
