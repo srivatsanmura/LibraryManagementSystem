@@ -34,7 +34,7 @@ class Book:
 
 #####################
 ## Define Member  class
-##### A simple class to store the attributes of a Member
+##### A simple class to represent the attributes of a Member
 ##### static method to create a Member object from a dictionary
 class Member:
     def __init__(self, member_id, name, age, contact, borrowed_books=None):
@@ -51,7 +51,7 @@ class Member:
         }
         self.borrowed_books.append(borrowed_book)
 
-    def remove_borrowed_book(self, bookid):
+    def remove_borrowed_book(self, book_id):
         # Check if member actually borrowed this book
         active_record = None
         for entry in self.borrowed_books:
@@ -121,26 +121,26 @@ class BorrowRecord:
 ##### This is the master class that ties all the above classes
 #####
 class Library:
-    def __init__(self, books=None, members=None, borrow_history=None):
+    def __init__(self, books=None, members=None, borrow_history=None, datafile=None):
         self.books = books or []
         self.members = members or []
         self.borrow_history = borrow_history or []
+        self.datafile = datafile or "library_data.json"
 
     # --------------------------------------------
     # JSON Persistence
     # --------------------------------------------
-    def save_to_json(self, filename="library_data.json"):
+    def save_to_json(self):
         data = {
             "books": [b.to_dict() for b in self.books],
             "members": [m.to_dict() for m in self.members],
             "borrow_history": [r.to_dict() for r in self.borrow_history]
         }
-        with open(filename, "w") as f:
+        with open(self.datafile, "w") as f:
             json.dump(data, f, indent=4)
 
     @staticmethod
     def load_from_json(filename="library_data.json"):
-        from classes import Book, Member, BorrowRecord  # adjust import if needed
         try:
             with open(filename, "r") as f:
                 data = json.load(f)
@@ -151,7 +151,7 @@ class Library:
         members = [Member.from_dict(m) for m in data.get("members", [])]
         history = [BorrowRecord.from_dict(r) for r in data.get("borrow_history", [])]
 
-        return Library(books, members, history)
+        return Library(books, members, history, filename)
 
     # --------------------------------------------
     # Helper Lookups
@@ -228,6 +228,8 @@ class Library:
         book = self.find_book_by_id(book_id)
         if not book:
             raise ValueError("Book does not exist.")
+
+        member.remove_borrowed_book(book_id=book_id)
 
         # Mark book available again
         book.available = True
